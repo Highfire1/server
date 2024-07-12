@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+    
+  # Langara Course Planner
+  langara-course-planner:
+    container_name: langara-course-planner
+    ports:
+      - '5001:5000'
+    image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
+
+
