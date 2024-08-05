@@ -14,3 +14,4 @@ Quickstart:
 - `cd server`
 - `chmod +x run.sh` `chmod +x stop.sh`
 - `touch .env`
+- `sudo ./run.sh`
