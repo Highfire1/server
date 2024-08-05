@@ -6,5 +6,61 @@ services:
     ports:
       - '80:5000'
     image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
+  
 
 
+  # ==== META ====
+
+  # nginx
+  nginx-proxy-manager:
+    container_name: nginx-proxy-manager
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - .volumes/nginx/nginxpm_data:/data
+      - .volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - 9443:9443
+    volumes:
+      - .volumes/portainer/portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # set timezone
+      - TZ=America/Vancouver 
+      # delete old containers
+      - WATCHTOWER_CLEANUP=true
+      # revive containers with updates
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_REVIVE_STOPPED=true
+
+      # post updates to logging channel
+      # - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_LOG_CHANNEL}
+      # but not startup messages
+      # - WATCHTOWER_NO_STARTUP_MESSAGE=true
+
+      # Use HTTP request to check for an image update
+      # curl -H "Authorization: Bearer token" localhost:8080/v1/update
+      # - WATCHTOWER_HTTP_API_UPDATE=true
+      # Set token for HTTP request from .env
+      # - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}
+      # Also continue checking for updates automatically (every hour)
+      # - WATCHTOWER_POLL_INTERVAL=3600
+      # - WATCHTOWER_HTTP_API_PERIODIC_POLLS=true
