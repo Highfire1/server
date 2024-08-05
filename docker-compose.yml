@@ -21,8 +21,8 @@ services:
       - '81:81'
       - '443:443'
     volumes:
-      - volumes/nginx/nginxpm_data:/data
-      - volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
+      - /volumes/nginx/nginxpm_data:/data
+      - /volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
 
   portainer:
     container_name: portainer
@@ -30,7 +30,7 @@ services:
     ports:
       - 9443:9443
     volumes:
-      - volumes/portainer/portainer_data:/data
+      - /volumes/portainer/portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
