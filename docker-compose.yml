@@ -12,9 +12,9 @@ services:
     container_name: andersons-website
     ports:
       - '5000:5000'
-    network_mode: host
+      - '5001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
-  
+
 
   # ==== META ====
 
@@ -27,7 +27,6 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
-    network_mode: host
     volumes:
       - /volumes/nginx/nginxpm_data:/data
       - /volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
@@ -37,7 +36,6 @@ services:
     image: portainer/portainer-ce:latest
     ports:
       - 9443:9443
-    network_mode: host
     volumes:
       - /volumes/portainer/portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -48,7 +46,6 @@ services:
     image: containrrr/watchtower
     ports:
       - '8080:8080'
-    network_mode: host
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -77,7 +74,7 @@ services:
 
 # don't use docker network isolation
 # connect networking directly to the host computer
-# networks:
-#   default:
-#     name: default-network
-#     driver: host 
+networks:
+  backend:
+    name: grah
+    driver: host 
