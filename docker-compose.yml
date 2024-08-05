@@ -6,8 +6,7 @@ services:
     ports:
       - '5000:5000'
     image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
-    network:
-      - backend
+  
 
 
   # ==== META ====
@@ -24,8 +23,6 @@ services:
     volumes:
       - /volumes/nginx/nginxpm_data:/data
       - /volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
-    network:
-      - backend
 
   portainer:
     container_name: portainer
@@ -36,8 +33,6 @@ services:
       - /volumes/portainer/portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
-    network:
-        - backend
 
   watchtower:
     container_name: watchtower
@@ -47,8 +42,6 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    network:
-      - backend
     environment:
       # set timezone
       - TZ=America/Vancouver 
@@ -71,3 +64,10 @@ services:
       # Also continue checking for updates automatically (every hour)
       # - WATCHTOWER_POLL_INTERVAL=3600
       # - WATCHTOWER_HTTP_API_PERIODIC_POLLS=true
+
+# don't use docker network isolation
+# connect networking directly to the host computer
+networks:
+  default:
+    name: default-network
+    driver: host 
