@@ -6,7 +6,8 @@ services:
     ports:
       - '5000:5000'
     image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
-  
+    network:
+      - backend
 
 
   # ==== META ====
@@ -23,6 +24,8 @@ services:
     volumes:
       - /volumes/nginx/nginxpm_data:/data
       - /volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
+    network:
+      - backend
 
   portainer:
     container_name: portainer
@@ -33,6 +36,8 @@ services:
       - /volumes/portainer/portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    network:
+        - backend
 
   watchtower:
     container_name: watchtower
@@ -42,6 +47,8 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    network:
+      - backend
     environment:
       # set timezone
       - TZ=America/Vancouver 
