@@ -1,14 +1,20 @@
 services:
     
   # Langara Course Planner
-  langara-course-planner:
-    container_name: langara-course-planner
+  # langara-course-planner:
+  #   container_name: langara-course-planner
+  #   ports:
+  #     - '5000:5000'
+  #   network_mode: host
+  #   image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
+  
+  andersons-website:
+    container_name: andersons-website
     ports:
       - '5000:5000'
     network_mode: host
-    image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
+    image: 'ghcr.io/highfire1/github-pages-replacement:latest'
   
-
 
   # ==== META ====
 
