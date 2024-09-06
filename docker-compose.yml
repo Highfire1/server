@@ -22,7 +22,7 @@ services:
   floor-planner:
     container_name: floor-planner
     ports:
-      - '7000:5001'
+      - '7000:5000'
       - '7001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
     secrets:
