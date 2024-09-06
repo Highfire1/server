@@ -15,7 +15,7 @@ services:
       - '5001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
     environment:
-      - WEBSITE_BACKEND_UPDATE_PASSWORD
+      - WEBSITE_BACKEND_UPDATE_PASSWORD=${WEBSITE_BACKEND_UPDATE_PASSWORD}
 
 floor-planner:
     container_name: floor-planner
@@ -24,7 +24,7 @@ floor-planner:
       - '5001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
     environment:
-      - WEBSITE_BACKEND_UPDATE_PASSWORD
+      - WEBSITE_BACKEND_UPDATE_PASSWORD=${WEBSITE_BACKEND_UPDATE_PASSWORD}
 
 
   # ==== META ====
