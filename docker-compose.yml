@@ -1,5 +1,5 @@
 services:
-    
+  
   # Langara Course Planner
   # langara-course-planner:
   #   container_name: langara-course-planner
@@ -14,18 +14,17 @@ services:
       - '5000:5000'
       - '5001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
-    environment:
-      - WEBSITE_BACKEND_UPDATE_PASSWORD=${WEBSITE_BACKEND_UPDATE_PASSWORD}
+    secrets:
+      - WEBSITE_BACKEND_UPDATE_PASSWORD
 
-floor-planner:
+  floor-planner:
     container_name: floor-planner
     ports:
       - '5000:5001'
       - '5001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
-    environment:
-      - WEBSITE_BACKEND_UPDATE_PASSWORD=${WEBSITE_BACKEND_UPDATE_PASSWORD}
-
+    secrets:
+      - WEBSITE_BACKEND_UPDATE_PASSWORD
 
   # ==== META ====
 
@@ -46,7 +45,7 @@ floor-planner:
     container_name: portainer
     image: portainer/portainer-ce:latest
     ports:
-      - 9443:9443
+      - '9443:9443'
     volumes:
       - /volumes/portainer/portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -89,3 +88,7 @@ networks:
   backend:
     name: grah
     driver: host 
+
+secrets:
+  WEBSITE_BACKEND_UPDATE_PASSWORD:
+    environment: WEBSITE_BACKEND_UPDATE_PASSWORD
