@@ -16,15 +16,19 @@ services:
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
     secrets:
       - WEBSITE_BACKEND_UPDATE_PASSWORD
+    volumes:
+      - /volumes/andersons-website/data:/data   # Mount volume for persistent data
 
   floor-planner:
     container_name: floor-planner
     ports:
-      - '5000:5001'
-      - '5001:80'
+      - '7000:5001'
+      - '7001:80'
     image: 'ghcr.io/highfire1/github-pages-replacement:latest'
     secrets:
       - WEBSITE_BACKEND_UPDATE_PASSWORD
+    volumes:
+      - /volumes/floor-planner/data:/data       # Mount volume for persistent data
 
   # ==== META ====
 
