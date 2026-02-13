@@ -1,38 +1,44 @@
 services:
   
-  # Langara Course Planner
-  # langara-course-planner:
-  #   container_name: langara-course-planner
+  # Langara Coursys Backend
+  langara-watcher-backend:
+    container_name: langara-watcher-backend
+    ports:
+      - '8000:8000'
+    image: "ghcr.io/highfire1/langara-coursys-backend-fetch:latest"
+    # restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - ./data/langara-api:/database
+
+  # Langara Coursys API
+  langara-watcher-api:
+    container_name: langara-watcher-api
+    ports:
+      - '5010:8000'
+    image: "ghcr.io/highfire1/langara-coursys-backend-serve:latest"
+    # restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - "./data/langara-api:/database"
+
+  # langara-coursys-rewrite:
+  #   container_name: rewrite
   #   ports:
-  #     - '5000:5000'
-  #   network_mode: host
-  #   image: 'ghcr.io/langaracpsc/langaracourseplanner:latest'
-  
-  andersons-website:
-    container_name: andersons-website
-    ports:
-      - '5000:5000'
-      - '5001:80'
-    image: 'ghcr.io/highfire1/github-pages-replacement:latest'
-    secrets:
-      - WEBSITE_BACKEND_UPDATE_PASSWORD
-    volumes:
-      - /volumes/andersons-website/data:/data   # Mount volume for persistent data
+  #     - '5050:3000'
+  #   image: "ghcr.io/highfire1/langara-coursys-backend-rewrite:latest"
+  #   networks:
+  #     - backend
+  #   volumes:
+  #     - ./data/langara-coursys-rewrite:/usr/src/app/data
 
-  floor-planner:
-    container_name: floor-planner
-    ports:
-      - '7000:5000'
-      - '7001:80'
-    image: 'ghcr.io/highfire1/github-pages-replacement:latest'
-    secrets:
-      - WEBSITE_BACKEND_UPDATE_PASSWORD
-    volumes:
-      - /volumes/floor-planner/data:/data       # Mount volume for persistent data
 
-  # ==== META ====
 
-  # nginx
+  # === SYSADMIN TOOLS === #
+
+  # NGINX manager
   nginx-proxy-manager:
     container_name: nginx-proxy-manager
     image: 'jc21/nginx-proxy-manager:latest'
@@ -42,57 +48,34 @@ services:
       - '81:81'
       - '443:443'
     volumes:
-      - /volumes/nginx/nginxpm_data:/data
-      - /volumes/nginx/nginxpm_letsencrypt:/etc/letsencrypt
+      - nginxpm_data:/data
+      - nginxpm_letsencrypt:/etc/letsencrypt
+    networks:
+      - backend
 
+  # Portainer, docker container manager
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ee:latest
     ports:
-      - '9443:9443'
+      - 9443:9443
     volumes:
-      - /volumes/portainer/portainer_data:/data
+      - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+    # restart: unless-stopped
 
-  watchtower:
-    container_name: watchtower
-    image: containrrr/watchtower
-    ports:
-      - '8080:8080'
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      # set timezone
-      - TZ=America/Vancouver 
-      # delete old containers
-      - WATCHTOWER_CLEANUP=true
-      # revive containers with updates
-      - WATCHTOWER_INCLUDE_STOPPED=true
-      - WATCHTOWER_REVIVE_STOPPED=true
 
-      # post updates to logging channel
-      # - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_LOG_CHANNEL}
-      # but not startup messages
-      # - WATCHTOWER_NO_STARTUP_MESSAGE=true
-
-      # Use HTTP request to check for an image update
-      # curl -H "Authorization: Bearer token" localhost:8080/v1/update
-      # - WATCHTOWER_HTTP_API_UPDATE=true
-      # Set token for HTTP request from .env
-      # - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}
-      # Also continue checking for updates automatically (every hour)
-      # - WATCHTOWER_POLL_INTERVAL=3600
-      # - WATCHTOWER_HTTP_API_PERIODIC_POLLS=true
-
-# don't use docker network isolation
-# connect networking directly to the host computer
 networks:
   backend:
-    name: grah
-    driver: host 
+    driver: bridge
 
-secrets:
-  WEBSITE_BACKEND_UPDATE_PASSWORD:
-    environment: WEBSITE_BACKEND_UPDATE_PASSWORD
+
+volumes:
+  postgres_db:
+
+  course_watcher_db:
+
+  portainer_data:
+
+  nginxpm_data:
+  nginxpm_letsencrypt:
