@@ -1,0 +1,12 @@
+BASE_URL=https://plausible.andersontseng.ca
+SECRET_KEY_BASE=
+HTTP_PORT=51000
+HTTPS_PORT=51001
+
+# for city level geolocation data
+MAXMIND_LICENSE_KEY=
+MAXMIND_EDITION=GeoLite2-City
+
+# for importing google analytics data
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

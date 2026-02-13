@@ -1,0 +1,5 @@
+services:
+    plausible:
+        ports:
+            - 51000:51000
+            - 51001:51001
