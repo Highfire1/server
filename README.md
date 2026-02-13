@@ -1,13 +1,11 @@
 # Server
 
-The config files for Anderson's GCP server
-
-
-Uses docker
+The setup for Andy's OVHCloud server.
 
 ON GCP 
-0.25 cores
-1 gb ram
+4 vCores
+8 GB memory
+75 GB ssd
 
 Quickstart:
 - `git clone https://github.com/Highfire1/server.git`
