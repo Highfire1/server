@@ -24,17 +24,67 @@ services:
     volumes:
       - "./data/langara-api:/database"
 
-  # langara-coursys-rewrite:
-  #   container_name: rewrite
-  #   ports:
-  #     - '5050:3000'
-  #   image: "ghcr.io/highfire1/langara-coursys-backend-rewrite:latest"
-  #   networks:
-  #     - backend
-  #   volumes:
-  #     - ./data/langara-coursys-rewrite:/usr/src/app/data
+  langara-coursys-rewrite:
+    container_name: rewrite
+    ports:
+      - '5050:3000'
+    image: "ghcr.io/highfire1/langara-coursys-backend-rewrite:latest"
+    networks:
+      - backend
+    volumes:
+      - ./data/langara-coursys-rewrite:/usr/src/app/data
+    env_file:
+      - rewrite.env
 
 
+  # Transit
+
+  backend:
+    container_name: translink-map-backend
+    image: "ghcr.io/highfire1/translink-map-backend:latest"
+    environment:
+      TRANSLINK_API_KEY: ${TRANSLINK_API_KEY:?TRANSLINK_API_KEY is required}
+    volumes:
+      - public-data:/app/public/data
+      - backend-db:/app/backend/data
+    # restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /app/public/data/stats.json || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 30s  # first run downloads GTFS static data (~30 secs)
+
+  # ── Read-only API service ───────────────────────────────────────────────────
+  api:
+    container_name: translink-map-api
+    image: "ghcr.io/highfire1/translink-map-api:latest"
+    ports:
+      - "3001:3001"
+    volumes:
+      - public-data:/app/public/data:ro
+      - backend-db:/app/backend/data:ro
+    depends_on:
+      backend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/api/stats > /dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Frontend (Vite build → nginx) ───────────────────────────────────────────
+  frontend:
+    container_name: translink-map-frontend
+    image: "ghcr.io/highfire1/translink-map-frontend:latest"
+    ports:
+      - "3000:80"
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      disable: true
 
   # === SYSADMIN TOOLS === #
 
@@ -79,3 +129,7 @@ volumes:
 
   nginxpm_data:
   nginxpm_letsencrypt:
+
+
+  public-data:   # GeoJSON / JSON outputs shared between backend and api
+  backend-db:    # SQLite GTFS database (written by backend, read by api)
